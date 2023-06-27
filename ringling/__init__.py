@@ -13,12 +13,3 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
-def print_test():
-    """This is a test function to see if a script in this folder is accessible
-
-    Args: None
-
-    Returns: None
-    """
-    print("Access to test_script.py in ringling directory successful")
