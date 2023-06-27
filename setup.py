@@ -1,5 +1,5 @@
 """
-Copyright 2023 Joshua S. Goldshteyn
+Copyright 2023 MSOE DISE Project
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,11 +19,10 @@ from setuptools import setup
 setup(name="ringling-cli",
       version=0.1,
       description="Client for Ringling",
-      author="Joshua Goldshteyn",
-      author_email="jsgoldshteyn@gmail.com",
+      author="MSOE DISE Project",
+      author_email="nowling@msoe.edu",
       license="Apache License, Version 2.0",
       zip_safe=False,
       packages=["ringling"],
       python_requires=">=3.8",
-      #install_requires = ["numpy>=0.19.1", "scipy>=0.19.1", "matplotlib", "seaborn", "sklearn", "joblib", "pandas", "mmh3"],
       scripts=["bin/ringling-cli"])
