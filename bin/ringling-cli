@@ -16,19 +16,45 @@ limitations under the License.
 
 import argparse
 from ringling.test_script import print_test
+from ringling.projects import create_project, list_projects, get_project
 
 def parseargs():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--action",
-                        type=str,
-                        required=False)
+    object_type_choices = ["project", "param_set", "deploy_status", "model_test_results"]
+    action_choices = ["get", "create", "list"]
+
+    parser.add_argument("object_type",
+                        type = str,
+                        choices = object_type_choices)
+
+    parser.add_argument("action",
+                        type = str,
+                        choices = action_choices)
+
+    parser.add_argument("-N", "--name",
+                    type = str,
+                    required = False)
+
+    parser.add_argument("-id", "--id",
+                type = int,
+                required = False)
 
     return parser.parse_args()
 
 if __name__ == "__main__":
     args = parseargs()
-    print_test()
-    print(args)
-    print(args.action)
-    print(type(args))
+
+    if args.object_type == "project":
+        if args.action == "get":
+            if args.id == None:
+                print("This action required an integer id to be specified using --id")
+            else:
+                get_project(args.id)
+        elif args.action == "create":
+            if args.name == None:
+                print("This action requires a name to be specified using --name or -N")
+            else:
+                create_project(args.name)
+        elif args.action == "list":
+            list_projects()
