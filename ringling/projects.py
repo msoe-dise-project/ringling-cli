@@ -14,9 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import os
-import requests
 import json
+import requests
 
 def get_url():
     """
@@ -42,7 +41,7 @@ def create_project(project_name):
 
             print("Project ID:", response_json['project_id'])
     except requests.exceptions.ConnectionError:
-        print("Failed to connect to model management service on localhost. Make sure Ringling is running.")
+        print("Failed to connect to model management service. Make sure Ringling is running.")
 
 def list_projects():
     """
@@ -54,7 +53,7 @@ def list_projects():
         response_json = response.json()
         print(json.dumps(response_json, indent=1))
     except requests.exceptions.ConnectionError:
-        print("Failed to connect to model management service on localhost. Make sure Ringling is running.")
+        print("Failed to connect to model management service. Make sure Ringling is running.")
 
 def get_project(project_id):
     """
@@ -71,4 +70,4 @@ def get_project(project_id):
             response_json = response.json()
             print(json.dumps(response_json, indent=1))
     except requests.exceptions.ConnectionError:
-        print("Failed to connect to model management service on localhost. Make sure Ringling is running.")
+        print("Failed to connect to model management service. Make sure Ringling is running.")
