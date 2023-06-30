@@ -57,7 +57,7 @@ def list_projects():
 
 def get_project(project_id):
     """
-    Return information about a specific project in the Ringling Service
+    Return information about a specific project in the Ringling Service by ID
     :param project_id:
     :return:
     """
