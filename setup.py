@@ -25,4 +25,5 @@ setup(name="ringling-cli",
       zip_safe=False,
       packages=["ringling"],
       python_requires=">=3.8",
+      install_requires=["requests"],
       scripts=["bin/ringling-cli"])
