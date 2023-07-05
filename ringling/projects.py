@@ -37,10 +37,9 @@ def create_project(base_url, project_name):
     try:
         response = requests.post(get_url(base_url),
                                  json=obj, timeout=5)
-        if response.status_code % 100 == 2:
+        if response.status_code // 100 == 2:
             response_json = response.json()
             print(f"Project {project_name} created successfully")
-
             print("Project ID:", response_json['project_id'])
         elif response.status_code == "400":
             print(f"Project {project_name} already exists", file=sys.stderr)
