@@ -16,13 +16,18 @@ limitations under the License.
 
 import argparse
 from ringling.test_script import print_test
-from ringling.projects import create_project, list_projects, get_project
+from ringling.projects import create_project
+from ringling.projects import list_projects
+from ringling.projects import get_project
 
 def parseargs():
     parser = argparse.ArgumentParser()
 
-    object_type_choices = ["project", "param_set", "deploy_status", "model_test_results"]
+    object_type_choices = ["project", "param-set", "deploy-status", "model-test-results"]
     action_choices = ["get", "create", "list"]
+
+    parser.add_argument("base_url",
+                        type = str)
 
     parser.add_argument("object_type",
                         type = str,
@@ -36,25 +41,31 @@ def parseargs():
                     type = str,
                     required = False)
 
-    parser.add_argument("-id", "--id",
+    parser.add_argument("--id",
                 type = int,
                 required = False)
+
+    #Create a URL argument
 
     return parser.parse_args()
 
 if __name__ == "__main__":
     args = parseargs()
 
+    base_url = args.base_url
+    if base_url == "localhost":
+        base_url = "http://localhost:8888"
+
     if args.object_type == "project":
         if args.action == "get":
             if args.id == None:
                 print("This action required an integer id to be specified using --id")
             else:
-                get_project(args.id)
+                get_project(base_url, args.id)
         elif args.action == "create":
             if args.name == None:
                 print("This action requires a name to be specified using --name or -N")
             else:
-                create_project(args.name)
+                create_project(base_url, args.name)
         elif args.action == "list":
-            list_projects()
+            list_projects(base_url)
