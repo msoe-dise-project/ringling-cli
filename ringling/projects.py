@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import json
 import sys
 import pprint
 import requests
@@ -47,7 +46,7 @@ def create_project(base_url, project_name):
             print(f"Project {project_name} already exists", file=sys.stderr)
             sys.exit(1)
     except requests.exceptions.ConnectionError:
-        print("Failed to connect to model management service. Make sure Ringling is running.", file=sys.stderr)
+        print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
 
 def list_projects(base_url):
@@ -60,7 +59,7 @@ def list_projects(base_url):
         response_json = response.json()
         pprint.pprint(response_json)
     except requests.exceptions.ConnectionError:
-        print("Failed to connect to model management service. Make sure Ringling is running.", file=sys.stderr)
+        print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
 
 def get_project(base_url, project_id):
@@ -78,6 +77,5 @@ def get_project(base_url, project_id):
             response_json = response.json()
             pprint.pprint(response_json)
     except requests.exceptions.ConnectionError:
-        print("Failed to connect to model management service. Make sure Ringling is running.", file=sys.stderr)
+        print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
-
