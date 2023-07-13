@@ -27,7 +27,7 @@ def handle_create(response):
         return True
     if response.status_code == 400:
         print(response.json()['error'], file=sys.stderr)
-        return False
+    return False
 
 
 def handle_modify(response, object_type, cur_id):
@@ -45,7 +45,7 @@ def handle_modify(response, object_type, cur_id):
         return False
     if response.status_code == 400:
         print(response.json()['error'], file=sys.stderr)
-        return False
+    return False
 
 
 def handle_get(response, object_type, cur_id):
@@ -60,4 +60,4 @@ def handle_get(response, object_type, cur_id):
         return True
     if response.status_code == 404:
         print(f"Invalid {object_type} ID {cur_id}", file=sys.stderr)
-        return False
+    return False
