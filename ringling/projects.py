@@ -15,7 +15,6 @@ limitations under the License.
 """
 
 import sys
-import pprint
 import requests
 from requests.exceptions import ConnectionError as RequestsConnectionError
 from .response_handling import handle_create

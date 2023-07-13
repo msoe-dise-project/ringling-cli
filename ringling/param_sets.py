@@ -15,7 +15,6 @@ limitations under the License.
 """
 
 import sys
-import pprint
 import requests
 from requests.exceptions import ConnectionError as RequestsConnectionError
 from .response_handling import handle_create
@@ -48,7 +47,7 @@ def create_param_set(base_url, project_id, training_params, is_active):
         response = requests.post(get_url(base_url),
                                  json=obj, timeout=5)
         if handle_create(response):
-            print(f"Parameter Set created successfully with ID {response.json()['parameter_set_id']}")
+            print(f"Parameter Set created with ID {response.json()['parameter_set_id']}")
     except RequestsConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
