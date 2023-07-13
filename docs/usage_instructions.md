@@ -67,29 +67,6 @@ Output:
 The following commands can be used to create, list, modify, and get paramater sets.
 
 #### Create
-###### Alternative 1:  
-Input:  
-```
-ringling-cli localhost param-set create --id 1 --params "{\"Param1\":\"Val1\"}" --active False
-```
-
-Output:
-```
-Parameter Set created successfully with ID 1
-```
-
-###### Alternative 2 (Single quotes internally converted to double quotes for json parsing due to windows command line limitations):  
-Input:  
-```
-ringling-cli localhost param-set create --id 1 --params "{'Param1':'Val1'}" --active False
-```
-
-Output:
-```
-Parameter Set created successfully with ID 2
-```
-
-###### Alternative 3:  
 Input:  
 ```
 ringling-cli localhost param-set create --id 2 --params "C:\Users\path\to\file.json" --active False

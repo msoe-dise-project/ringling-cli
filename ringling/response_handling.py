@@ -15,7 +15,9 @@ limitations under the License.
 """
 
 import sys
-
+import pprint
+import requests
+from requests.exceptions import ConnectionError
 
 def handle_create(response):
     """
@@ -23,10 +25,11 @@ def handle_create(response):
     :param response: the response object
     :return: if the response was a success
     """
-    if response.status_code // 100 == 2:
+    if 200 <= response.status_code < 300:
         return True
     if response.status_code == 400:
         print(response.json()['error'], file=sys.stderr)
+        sys.exit(1)
     return False
 
 
@@ -38,13 +41,14 @@ def handle_modify(response, object_type, cur_id):
     :param cur_id: the id of the object
     :return: if the response was a success
     """
-    if response.status_code // 100 == 2:
+    if 200 <= response.status_code < 300:
         return True
     if response.status_code == 404:
         print(f"Invalid {object_type} ID {cur_id}", file=sys.stderr)
-        return False
+        sys.exit(1)
     if response.status_code == 400:
         print(response.json()['error'], file=sys.stderr)
+        sys.exit(1)
     return False
 
 
@@ -56,8 +60,19 @@ def handle_get(response, object_type, cur_id):
     :param cur_id: the id of the object
     :return: if the response was a success
     """
-    if response.status_code // 100 == 2:
+    if 200 <= response.status_code < 300:
         return True
     if response.status_code == 404:
         print(f"Invalid {object_type} ID {cur_id}", file=sys.stderr)
+        sys.exit(1)
     return False
+
+
+def perform_list(endpoint_url):
+    try:
+        response = requests.get(endpoint_url, timeout=5)
+        response_json = response.json()
+        pprint.pprint(response_json)
+    except ConnectionError:
+        print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
+        sys.exit(1)

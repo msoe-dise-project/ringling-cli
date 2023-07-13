@@ -17,9 +17,10 @@ limitations under the License.
 import sys
 import pprint
 import requests
-from ringling.response_handling import handle_create
-from ringling.response_handling import handle_get
-
+from requests.exceptions import ConnectionError
+from .response_handling import handle_create
+from .response_handling import handle_get
+from .response_handling import perform_list
 
 def get_url(base_url):
     """
@@ -44,9 +45,7 @@ def create_project(base_url, project_name):
             response_json = response.json()
             print(f"Project {project_name} created successfully")
             print("Project ID:", response_json['project_id'])
-        else:
-            sys.exit(1)
-    except requests.exceptions.ConnectionError:
+    except ConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
 
@@ -56,13 +55,7 @@ def list_projects(base_url):
     :param base_url: The URL of the Ringling Service
     :return: None
     """
-    try:
-        response = requests.get(get_url(base_url), timeout=5)
-        response_json = response.json()
-        pprint.pprint(response_json)
-    except requests.exceptions.ConnectionError:
-        print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
-        sys.exit(1)
+    perform_list(get_url(base_url))
 
 def get_project(base_url, project_id):
     """
@@ -77,8 +70,6 @@ def get_project(base_url, project_id):
         if handle_get(response, "Project", project_id):
             response_json = response.json()
             pprint.pprint(response_json)
-        else:
-            sys.exit(1)
-    except requests.exceptions.ConnectionError:
+    except ConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)

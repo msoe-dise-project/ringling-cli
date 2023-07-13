@@ -17,9 +17,11 @@ limitations under the License.
 import sys
 import pprint
 import requests
-from ringling.response_handling import handle_create
-from ringling.response_handling import handle_get
-from ringling.response_handling import handle_modify
+from requests.exceptions import ConnectionError
+from .response_handling import handle_create
+from .response_handling import handle_get
+from .response_handling import handle_modify
+from .response_handling import perform_list
 
 def get_url(base_url):
     """
@@ -48,9 +50,7 @@ def create_param_set(base_url, project_id, training_params, is_active):
         if handle_create(response):
             response_json = response.json()
             print(f"Parameter Set created successfully with ID {response_json['parameter_set_id']}")
-        else:
-            sys.exit(1)
-    except requests.exceptions.ConnectionError:
+    except ConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
 
@@ -67,9 +67,7 @@ def get_param_set(base_url, param_set_id):
         if handle_get(response, "Parameter Set", param_set_id):
             response_json = response.json()
             pprint.pprint(response_json)
-        else:
-            sys.exit(1)
-    except requests.exceptions.ConnectionError:
+    except ConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
 
@@ -88,9 +86,7 @@ def modify_param_set(base_url, param_set_id, is_active):
         response = requests.patch(url, json=update, timeout=5)
         if handle_modify(response, "Parameter Set", param_set_id):
             print("Parameter Set", param_set_id, "active status changed to", is_active)
-        else:
-            sys.exit(1)
-    except requests.exceptions.ConnectionError:
+    except ConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
 
@@ -101,10 +97,4 @@ def list_param_sets(base_url):
     :param base_url: The URL of the Ringling Service
     :return: None
     """
-    try:
-        response = requests.get(get_url(base_url), timeout=5)
-        response_json = response.json()
-        pprint.pprint(response_json)
-    except requests.exceptions.ConnectionError:
-        print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
-        sys.exit(1)
+    perform_list(get_url(base_url))
