@@ -17,6 +17,7 @@ limitations under the License.
 import sys
 import pprint
 import requests
+from requests.exceptions import ConnectionError as RequestsConnectionError
 from .response_handling import handle_create
 from .response_handling import handle_get
 from .response_handling import handle_modify
@@ -48,7 +49,7 @@ def create_param_set(base_url, project_id, training_params, is_active):
                                  json=obj, timeout=5)
         if handle_create(response):
             print(f"Parameter Set created successfully with ID {response.json()['parameter_set_id']}")
-    except requests.exceptions.ConnectionError:
+    except RequestsConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
 
@@ -63,7 +64,7 @@ def get_param_set(base_url, param_set_id):
     try:
         response = requests.get(url, timeout=5)
         handle_get(response, "Parameter Set", param_set_id)
-    except requests.exceptions.ConnectionError:
+    except RequestsConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
 
@@ -82,7 +83,7 @@ def modify_param_set(base_url, param_set_id, is_active):
         response = requests.patch(url, json=update, timeout=5)
         if handle_modify(response, "Parameter Set", param_set_id):
             print("Parameter Set", param_set_id, "active status changed to", is_active)
-    except requests.exceptions.ConnectionError:
+    except RequestsConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
 

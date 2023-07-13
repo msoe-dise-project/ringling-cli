@@ -17,6 +17,7 @@ limitations under the License.
 import sys
 import pprint
 import requests
+from requests.exceptions import ConnectionError as RequestsConnectionError
 
 def handle_create(response):
     """
@@ -77,6 +78,6 @@ def perform_list(rest_url):
         response = requests.get(rest_url, timeout=5)
         response_json = response.json()
         pprint.pprint(response_json)
-    except requests.exceptions.ConnectionError:
+    except RequestsConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
