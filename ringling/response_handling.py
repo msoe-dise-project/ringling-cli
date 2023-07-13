@@ -15,7 +15,6 @@ limitations under the License.
 """
 
 import sys
-import requests
 
 
 def handle_create(response):
@@ -26,9 +25,9 @@ def handle_create(response):
     """
     if response.status_code // 100 == 2:
         return True
-    elif response.status_code == 400:
+    if response.status_code == 400:
         print(response.json()['error'], file=sys.stderr)
-        sys.exit(1)
+        return False
 
 
 def handle_modify(response, object_type, cur_id):
@@ -41,12 +40,12 @@ def handle_modify(response, object_type, cur_id):
     """
     if response.status_code // 100 == 2:
         return True
-    elif response.status_code == 404:
+    if response.status_code == 404:
         print(f"Invalid {object_type} ID {cur_id}", file=sys.stderr)
-        sys.exit(1)
-    elif response.status_code == 400:
+        return False
+    if response.status_code == 400:
         print(response.json()['error'], file=sys.stderr)
-        sys.exit(1)
+        return False
 
 
 def handle_get(response, object_type, cur_id):
@@ -59,6 +58,6 @@ def handle_get(response, object_type, cur_id):
     """
     if response.status_code // 100 == 2:
         return True
-    elif response.status_code == 404:
+    if response.status_code == 404:
         print(f"Invalid {object_type} ID {cur_id}", file=sys.stderr)
-        sys.exit(1)
+        return False

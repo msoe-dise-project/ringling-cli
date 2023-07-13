@@ -48,7 +48,8 @@ def create_param_set(base_url, project_id, training_params, is_active):
         if handle_create(response):
             response_json = response.json()
             print(f"Parameter Set created successfully with ID {response_json['parameter_set_id']}")
-
+        else:
+            sys.exit(1)
     except requests.exceptions.ConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
@@ -66,6 +67,8 @@ def get_param_set(base_url, param_set_id):
         if handle_get(response, "Parameter Set", param_set_id):
             response_json = response.json()
             pprint.pprint(response_json)
+        else:
+            sys.exit(1)
     except requests.exceptions.ConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
@@ -85,6 +88,8 @@ def modify_param_set(base_url, param_set_id, is_active):
         response = requests.patch(url, json=update, timeout=5)
         if handle_modify(response, "Parameter Set", param_set_id):
             print("Parameter Set", param_set_id, "active status changed to", is_active)
+        else:
+            sys.exit(1)
     except requests.exceptions.ConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)

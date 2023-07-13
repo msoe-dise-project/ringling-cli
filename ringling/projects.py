@@ -44,7 +44,8 @@ def create_project(base_url, project_name):
             response_json = response.json()
             print(f"Project {project_name} created successfully")
             print("Project ID:", response_json['project_id'])
-
+        else:
+            sys.exit(1)
     except requests.exceptions.ConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
@@ -76,6 +77,8 @@ def get_project(base_url, project_id):
         if handle_get(response, "Project", project_id):
             response_json = response.json()
             pprint.pprint(response_json)
+        else:
+            sys.exit(1)
     except requests.exceptions.ConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
