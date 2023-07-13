@@ -17,7 +17,6 @@ limitations under the License.
 import sys
 import pprint
 import requests
-from requests.exceptions import ConnectionError
 from .response_handling import handle_create
 from .response_handling import handle_get
 from .response_handling import handle_modify
@@ -48,15 +47,14 @@ def create_param_set(base_url, project_id, training_params, is_active):
         response = requests.post(get_url(base_url),
                                  json=obj, timeout=5)
         if handle_create(response):
-            response_json = response.json()
-            print(f"Parameter Set created successfully with ID {response_json['parameter_set_id']}")
-    except ConnectionError:
+            print(f"Parameter Set created successfully with ID {response.json()['parameter_set_id']}")
+    except requests.exceptions.ConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
 
 def get_param_set(base_url, param_set_id):
     """
-
+    Get a parameter set given an ID
     :param base_url: The URL of the Ringling Service
     :param param_set_id: The ID of the parameter set
     :return: None
@@ -64,10 +62,8 @@ def get_param_set(base_url, param_set_id):
     url = get_url(base_url) + "/" + str(param_set_id)
     try:
         response = requests.get(url, timeout=5)
-        if handle_get(response, "Parameter Set", param_set_id):
-            response_json = response.json()
-            pprint.pprint(response_json)
-    except ConnectionError:
+        handle_get(response, "Parameter Set", param_set_id)
+    except requests.exceptions.ConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
 
@@ -86,7 +82,7 @@ def modify_param_set(base_url, param_set_id, is_active):
         response = requests.patch(url, json=update, timeout=5)
         if handle_modify(response, "Parameter Set", param_set_id):
             print("Parameter Set", param_set_id, "active status changed to", is_active)
-    except ConnectionError:
+    except requests.exceptions.ConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
 

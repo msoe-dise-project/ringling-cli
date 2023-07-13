@@ -17,7 +17,6 @@ limitations under the License.
 import sys
 import pprint
 import requests
-from requests.exceptions import ConnectionError
 
 def handle_create(response):
     """
@@ -61,18 +60,23 @@ def handle_get(response, object_type, cur_id):
     :return: if the response was a success
     """
     if 200 <= response.status_code < 300:
-        return True
+        response_json = response.json()
+        pprint.pprint(response_json)
     if response.status_code == 404:
         print(f"Invalid {object_type} ID {cur_id}", file=sys.stderr)
         sys.exit(1)
-    return False
 
 
-def perform_list(endpoint_url):
+def perform_list(rest_url):
+    """
+    Get the list from the REST url
+    :param rest_url: The url to perform GET on
+    :return: None
+    """
     try:
-        response = requests.get(endpoint_url, timeout=5)
+        response = requests.get(rest_url, timeout=5)
         response_json = response.json()
         pprint.pprint(response_json)
-    except ConnectionError:
+    except requests.exceptions.ConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
