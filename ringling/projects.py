@@ -15,9 +15,11 @@ limitations under the License.
 """
 
 import sys
-import pprint
 import requests
-
+from requests.exceptions import ConnectionError as RequestsConnectionError
+from .response_handling import handle_create
+from .response_handling import handle_get
+from .response_handling import perform_list
 
 def get_url(base_url):
     """
@@ -30,6 +32,7 @@ def get_url(base_url):
 def create_project(base_url, project_name):
     """
     Create a project on the Ringling service
+    :param base_url: The URL of the Ringling Service
     :param project_name: The name of the project to create
     :return: The response from the service
     """
@@ -37,44 +40,32 @@ def create_project(base_url, project_name):
     try:
         response = requests.post(get_url(base_url),
                                  json=obj, timeout=5)
-        if response.status_code // 100 == 2:
-            response_json = response.json()
+        if handle_create(response):
             print(f"Project {project_name} created successfully")
-            print("Project ID:", response_json['project_id'])
-        elif response.status_code == "400":
-            print(f"Project {project_name} already exists", file=sys.stderr)
-            sys.exit(1)
-    except requests.exceptions.ConnectionError:
+            print("Project ID:", response.json()['project_id'])
+    except RequestsConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
 
 def list_projects(base_url):
     """
     List all the projects in the Ringling Service
+    :param base_url: The URL of the Ringling Service
     :return: None
     """
-    try:
-        response = requests.get(get_url(base_url), timeout=5)
-        response_json = response.json()
-        pprint.pprint(response_json)
-    except requests.exceptions.ConnectionError:
-        print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
-        sys.exit(1)
+    perform_list(get_url(base_url))
 
 def get_project(base_url, project_id):
     """
     Return information about a specific project in the Ringling Service by ID
+    :param base_url: The URL of the Ringling Service
     :param project_id:
-    :return:
+    :return: None
     """
     url = get_url(base_url) + "/" + str(project_id)
     try:
         response = requests.get(url, timeout=5)
-        if response.status_code == 404:
-            print("Invalid Project ID")
-        else:
-            response_json = response.json()
-            pprint.pprint(response_json)
-    except requests.exceptions.ConnectionError:
+        handle_get(response, "Project", project_id)
+    except RequestsConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
