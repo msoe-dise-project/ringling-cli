@@ -237,7 +237,7 @@ if __name__ == "__main__":
             else:
                 with open(args.model, 'rb') as file:
                     if args.model.endswith(".pickle") or args.model.endswith(".p"):
-                        model_data = pickle.dumps(pickle.load(file)).hex()
+                        model_data = pickle.dugit checmps(pickle.load(file)).hex()
                     else:
                         model_data = pickle.dumps(file.read()).hex()
                 try:
