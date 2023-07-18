@@ -16,7 +16,7 @@ If you would prefer to use a virtual environment instead of installing system wi
 
 #### Linux:
 ```bash
-$ cd ringling-cli.py
+$ cd ringling-cli
 $ python3 -m venv venv
 $ source venv/Scripts/activate
 $ python3 setup.py install
@@ -29,7 +29,7 @@ You can install Ringling-cli using Python's setup tools:
 
 #### Linux:
 ```bash
-$ cd ringling-cli.py
+$ cd ringling-cli
 $ sudo python3 setup.py install
 ```
 
