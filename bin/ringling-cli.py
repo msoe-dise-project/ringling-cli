@@ -16,8 +16,10 @@ limitations under the License.
 
 import json
 import argparse
+import pickle
 import sys
 import os
+from datetime import datetime
 from ringling.test_script import print_test
 from ringling.projects import create_project
 from ringling.projects import list_projects
@@ -26,7 +28,10 @@ from ringling.param_sets import create_param_set
 from ringling.param_sets import list_param_sets
 from ringling.param_sets import get_param_set
 from ringling.param_sets import modify_param_set
-
+from ringling.trained_models import create_trained_model
+from ringling.trained_models import list_trained_models
+from ringling.trained_models import get_trained_model
+from ringling.trained_models import modify_trained_model
 
 def parse_boolean(arg):
     if arg in ("True", "true", 1):
@@ -107,6 +112,79 @@ def parseargs():
 
     param_parsers.add_parser("list", help="List parameter sets")
 
+    # Trained model parsing
+    model_parser = subparsers.add_parser("trained-model", help="Project interaction")
+    model_parsers = model_parser.add_subparsers(dest="action")
+
+    model_get_parser = model_parsers.add_parser("get", help="Get trained model by ID")
+
+    model_get_parser.add_argument("--id",
+                                    type=int,
+                                    required=True,
+                                    help="A trained model ID specifying the trained model to return")
+
+    model_create_parser = model_parsers.add_parser("create", help="Create a trained model")
+
+    model_create_parser.add_argument("-P", "--project-id",
+                                     type=int,
+                                     required=True,
+                                     dest="project_id",
+                                     help="An integer ID specifying the project that the trained model is linked to")
+
+    model_create_parser.add_argument("-PS", "--param-set-id",
+                                     type=int,
+                                     required=True,
+                                     dest="param_set_id",
+                                     help="An integer ID specifying the parameter set "
+                                          "that the trained model is linked to")
+
+    model_create_parser.add_argument("-TS", "--train-data-start",
+                                     type=str,
+                                     required=True,
+                                     dest="train_data_start",
+                                     help="An ISO-8601 formatted string describing the "
+                                          "start datetime of the training data")
+
+    model_create_parser.add_argument("-TE", "--train-data-end",
+                                     type=str,
+                                     required=True,
+                                     dest="train_data_end",
+                                     help="An ISO-8601 formatted string describing the "
+                                          "end datetime of the training data")
+
+    model_create_parser.add_argument("-T", "--timestamp",
+                                     type=str,
+                                     required=True,
+                                     help="An ISO-8601 formatted string describing the training timestamp")
+
+    model_create_parser.add_argument("-M", "--model-file",
+                                     type=str,
+                                     required=True,
+                                     dest="model",
+                                     help="A path to a file containing the model data")
+
+    model_create_parser.add_argument("-S", "--set-deployment-stage",
+                                     type=str,
+                                     required=True,
+                                     dest="deployment_stage",
+                                     choices=['testing', 'production', 'retired'],
+                                     help="The deployment stage of the model")
+
+    model_modify_parser = model_parsers.add_parser("modify", help="Modify the activity status of a parameter set")
+
+    model_modify_parser.add_argument("--id",
+                                     type=int,
+                                     required=True,
+                                     help="An integer ID specifying the trained model to modify")
+
+    model_modify_parser.add_argument("-S", "--set-deployment-stage",
+                                     type=str,
+                                     required=True,
+                                     dest="deployment_stage",
+                                     choices=['testing', 'production', 'retired'],
+                                     help="The deployment stage of the model")
+
+    model_parsers.add_parser("list", help="List trained models")
     return parser.parse_args()
 
 
@@ -147,3 +225,35 @@ if __name__ == "__main__":
             modify_param_set(base_url, args.id, args.active)
         elif args.action == "list":
             list_param_sets(base_url)
+
+    elif args.object == "trained-model":
+        if args.action == "get":
+            get_trained_model(base_url, args.id)
+        elif args.action == "create":
+            model_data = ""
+            if not os.path.isfile(args.model):
+                print("Specified file does not exist", file=sys.stderr)
+                sys.exit(1)
+            else:
+                with open(args.model, 'rb') as file:
+                    if args.model.endswith(".pickle") or args.model.endswith(".p"):
+                        model_data = pickle.dumps(pickle.load(file)).hex()
+                    else:
+                        model_data = pickle.dumps(file.read()).hex()
+                try:
+                    datetime.fromisoformat(args.train_data_start)
+                    datetime.fromisoformat(args.train_data_end)
+                    datetime.fromisoformat(args.timestamp)
+                except ValueError:
+                    print("Datetimes for training data start, training data end, and timestamp "
+                          "must be in ISO-8601 format", file=sys.stderr)
+                    sys.exit(1)
+                create_trained_model(base_url, args.project_id, args.param_set_id,
+                                     args.train_data_start, args.train_data_end, model_data,
+                                     args.timestamp, args.deployment_stage)
+        elif args.action == "modify":
+            modify_trained_model(base_url, args.id, args.deployment_stage)
+        elif args.action == "list":
+            list_trained_models(base_url)
+
+

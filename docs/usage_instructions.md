@@ -64,7 +64,7 @@ Output:
 ```
 
 ## Interfacing with Parameter Sets
-The following commands can be used to create, list, modify, and get paramater sets.
+The following commands can be used to create, list, modify, and get parameter sets.
 
 #### Create
 Input:  
@@ -116,14 +116,91 @@ Output:
 Input:  
 
 ```
-ringling-cli localhost param-set get --id 1
+ringling-cli localhost param-set modify --id 5 --set-status True
 ```
 
 Output:  
 
 ```
-{'is_active': True,
- 'parameter_set_id': 1,
- 'project_id': 5,
- 'training_parameters': {'param1': 1, 'param2': '2'}}
+Parameter Set 5 active status changed to True
+```
+
+## Interfacing with Trained Models
+The following commands can be used to create, list, modify, and get trained models.
+
+#### Create
+Input:
+
+```
+ringling-cli localhost trained-model create --project-id 2 --param-set-id 3
+--train-data-start 2023-07-12T12:05:08.060499 --train-data-end 2023-07-14T12:25:08.080499
+--timestamp 2023-07-17T12:05:08.060499 --model-file "C:\Users\path\to\file.pickle"
+--deployment-stage testing
+```
+
+Output:
+```
+Trained model created with ID 11
+```
+
+#### List
+Input:
+
+```
+ringling-cli localhost trained-model list
+```
+
+Output:
+
+```
+{'trained_models': [{'deployment_stage': 'testing',
+                     'model_id': 1,
+                     'model_object': '8004950b000000000000008f94284b014b034b05902e',
+                     'parameter_set_id': 1,
+                     'project_id': 5,
+                     'train_timestamp': '2023-07-17T17:24:30.248546',
+                     'training_data_from': '2023-07-14T17:24:30.248532',
+                     'training_data_until': '2023-07-17T17:24:30.248539'},
+                    {'deployment_stage': 'testing',
+                     'model_id': 2,
+                     'model_object': '80049513000000000000007d94288c03796573944b018c026e6f9489752e',
+                     'parameter_set_id': 49,
+                     'project_id': 5,
+                     'train_timestamp': '2023-07-17T17:24:30.260156',
+                     'training_data_from': '2023-07-14T17:24:30.260145',
+                     'training_data_until': '2023-07-17T17:24:30.260151'}]}
+```
+
+#### Get
+Input:
+
+```
+ringling-cli localhost trained-model get --id 9
+```
+
+Output:
+
+```
+{'deployment_stage': 'testing',
+ 'model_id': 9,
+ 'model_object': '80049513000000000000007d94288c03796573944b018c026e6f9489752e',
+ 'parameter_set_id': 3,
+ 'project_id': 2,
+ 'train_timestamp': '2023-07-17T12:05:08.060499',
+ 'training_data_from': '2023-07-12T12:05:08.060499',
+ 'training_data_until': '2023-07-14T12:25:08.080499'}
+ ```
+
+ #### Modify
+
+ Input:
+
+ ```
+ localhost trained-model modify --id 1 --set-deployment-stage testing
+ ```
+
+ Output:
+
+```
+Trained Model 1 deployment status changed to testing
 ```

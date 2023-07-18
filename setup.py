@@ -16,7 +16,7 @@ limitations under the License.
 
 from setuptools import setup
 
-setup(name="ringling-cli",
+setup(name="ringling-cli.py",
       version=0.1,
       description="Client for Ringling",
       author="MSOE DISE Project",
@@ -26,4 +26,4 @@ setup(name="ringling-cli",
       packages=["ringling"],
       python_requires=">=3.8",
       install_requires=["requests"],
-      scripts=["bin/ringling-cli"])
+      scripts=["bin/ringling-cli.py"])
