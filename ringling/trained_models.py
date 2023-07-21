@@ -22,76 +22,69 @@ from .response_handling import handle_get
 from .response_handling import handle_modify
 from .response_handling import perform_list
 
-
 def get_url(base_url):
     """
     Get the URL for interacting with projects
     :return: The project URL
     """
-    return base_url + "/v1/parameter_sets"
+    return base_url + "/v1/trained_models"
 
 
-def create_param_set(base_url, project_id, training_params, is_active):
+def create_trained_model(base_url, obj):
     """
-    Create a parameter set on the Ringling service
+    Create a trained model on the Ringling service
     :param base_url: The URL of the Ringling Service
-    :param project_id: The ID of the project that the parameter set belongs to
-    :param training_params: The parameters of the parameter set
-    :param is_active: If the parameter set is active or inactive
+    :param obj: The model object payload
     :return: None
     """
-    obj = {"project_id": project_id,
-           "training_parameters": training_params,
-           "is_active": is_active}
-
     try:
         response = requests.post(get_url(base_url),
                                  json=obj, timeout=5)
         if handle_create(response):
-            print(f"Parameter Set created with ID {response.json()['parameter_set_id']}")
+            print(f"Trained model created with ID {response.json()['model_id']}")
     except RequestsConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
 
 
-def get_param_set(base_url, param_set_id):
+def get_trained_model(base_url, trained_model_id):
     """
-    Get a parameter set given an ID
+    Get a trained model given an ID
     :param base_url: The URL of the Ringling Service
-    :param param_set_id: The ID of the parameter set
+    :param trained_model_id: The ID of the trained model
     :return: None
     """
-    url = get_url(base_url) + "/" + str(param_set_id)
+    url = get_url(base_url) + "/" + str(trained_model_id)
     try:
         response = requests.get(url, timeout=5)
-        handle_get(response, "Parameter Set", param_set_id)
+        handle_get(response, "Trained Model", trained_model_id)
     except RequestsConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
 
 
-def modify_param_set(base_url, param_set_id, is_active):
+def modify_trained_model(base_url, model_id, status):
     """
 
     :param base_url: The URL of the Ringling Service
-    :param param_set_id: The ID of the parameter set
-    :param is_active: If the parameter set should be set to active or inactive
+    :param model_id: The ID of the trained model
+    :param status: The current deployment status of the model
     :return: None
     """
-    url = get_url(base_url) + "/" + str(param_set_id)
-    update = {"is_active": is_active}
+    url = get_url(base_url) + "/" + str(model_id)
+    update = {"deployment_stage": status}
     try:
         response = requests.patch(url, json=update, timeout=5)
-        if handle_modify(response, "Parameter Set", param_set_id):
-            print("Parameter Set", param_set_id, "active status changed to", is_active)
+        if handle_modify(response, "Trained Model", model_id):
+            print("Trained Model", model_id, "deployment status changed to", status)
     except RequestsConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
 
 
-def list_param_sets(base_url):
+def list_trained_models(base_url):
     """
-    List all the parameter sets in the Ringling Service
+    List all the trained models in the Ringling Service
     :param base_url: The URL of the Ringling Service
     :return: None
     """
