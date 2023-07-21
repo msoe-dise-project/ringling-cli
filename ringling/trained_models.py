@@ -30,29 +30,13 @@ def get_url(base_url):
     return base_url + "/v1/trained_models"
 
 
-def create_trained_model(base_url, project_id, param_set_id, training_data_from, training_data_to, model_obj,
-                         train_timestamp, deployment_stage):
+def create_trained_model(base_url, obj):
     """
     Create a trained model on the Ringling service
     :param base_url: The URL of the Ringling Service
-    :param project_id: The ID of the project that the trained model belongs to
-    :param param_set_id: The ID of the parameter set that the trained model belongs to
-    :param training_data_from: The start datetime of the training data
-    :param training_data_to: The end datetime of the training data
-    :param model_obj: The trained model object
-    :param train_timestamp: The timestamp for model training
-    :param deployment_stage: The current deployment stage of the model
+    :param obj: The model object payload
     :return: None
     """
-
-    obj = {"project_id": project_id,
-           "parameter_set_id": param_set_id,
-           "training_data_from": training_data_from,
-           "training_data_until": training_data_to,
-           "model_object": model_obj,
-           "train_timestamp": train_timestamp,
-           "deployment_stage": deployment_stage}
-
     try:
         response = requests.post(get_url(base_url),
                                  json=obj, timeout=5)

@@ -248,9 +248,14 @@ if __name__ == "__main__":
                     print("Datetimes for training data start, training data end, and timestamp "
                           "must be in ISO-8601 format", file=sys.stderr)
                     sys.exit(1)
-                create_trained_model(base_url, args.project_id, args.param_set_id,
-                                     args.train_data_start, args.train_data_end, model_data,
-                                     args.timestamp, args.deployment_stage)
+                model_payload = {"project_id": args.project_id,
+                                 "parameter_set_id": args.param_set_id,
+                                 "training_data_from": args.train_data_start,
+                                 "training_data_until": args.train_data_end,
+                                 "model_object": model_data,
+                                 "train_timestamp": args.timestamp,
+                                 "deployment_stage": args.deployment_stage}
+                create_trained_model(base_url, model_payload)
         elif args.action == "modify":
             modify_trained_model(base_url, args.id, args.deployment_stage)
         elif args.action == "list":
