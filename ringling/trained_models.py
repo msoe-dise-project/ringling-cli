@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import sys
 import requests
 from requests.exceptions import ConnectionError as RequestsConnectionError
 from .response_handling import handle_create

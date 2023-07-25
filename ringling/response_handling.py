@@ -19,6 +19,7 @@ import pprint
 import requests
 from requests.exceptions import ConnectionError as RequestsConnectionError
 
+
 def handle_create(response):
     """
     Handle the response from create commands

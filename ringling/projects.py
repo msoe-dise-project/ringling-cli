@@ -14,12 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import sys
 import requests
 from requests.exceptions import ConnectionError as RequestsConnectionError
 from .response_handling import handle_create
 from .response_handling import handle_get
 from .response_handling import perform_list
+from .response_handling import connection_error
 
 
 def get_url(base_url):
@@ -45,8 +45,7 @@ def create_project(base_url, project_name):
             print(f"Project {project_name} created successfully")
             print("Project ID:", response.json()['project_id'])
     except RequestsConnectionError:
-        print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
-        sys.exit(1)
+        connection_error()
 
 
 def list_projects(base_url):
@@ -70,5 +69,4 @@ def get_project(base_url, project_id):
         response = requests.get(url, timeout=5)
         handle_get(response, "Project", project_id)
     except RequestsConnectionError:
-        print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
-        sys.exit(1)
+        connection_error()

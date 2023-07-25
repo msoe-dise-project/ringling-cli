@@ -14,13 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import sys
 import requests
 from requests.exceptions import ConnectionError as RequestsConnectionError
 from .response_handling import handle_create
 from .response_handling import handle_get
 from .response_handling import perform_list
 from .response_handling import connection_error
+
 
 def get_url(base_url):
     """
@@ -46,17 +46,17 @@ def create_model_test(base_url, obj):
         connection_error()
 
 
-def get_model_test(base_url, trained_model_id):
+def get_model_test(base_url, model_test_id):
     """
     Get a model test given an ID
     :param base_url: The URL of the Ringling Service
-    :param trained_model_id: The ID of the model test
+    :param model_test_id: The ID of the model test
     :return: None
     """
-    url = get_url(base_url) + "/" + str(trained_model_id)
+    url = get_url(base_url) + "/" + str(model_test_id)
     try:
         response = requests.get(url, timeout=5)
-        handle_get(response, "Model Test", trained_model_id)
+        handle_get(response, "Model Test", model_test_id)
     except RequestsConnectionError:
         connection_error()
 
