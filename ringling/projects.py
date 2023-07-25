@@ -70,3 +70,4 @@ def get_project(base_url, project_id):
         handle_get(response, "Project", project_id)
     except RequestsConnectionError:
         connection_error()
+        
