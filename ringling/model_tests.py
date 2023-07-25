@@ -56,8 +56,7 @@ def get_model_test(base_url, trained_model_id):
     """
     url = get_url(base_url) + "/" + str(trained_model_id)
     try:
-        response = requests.get(url, timeout=5)
-        handle_get(response, "Model Test", trained_model_id)
+        handle_get(requests.get(url, timeout=5), "Model Test", trained_model_id)
     except RequestsConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
