@@ -19,21 +19,20 @@ import requests
 from requests.exceptions import ConnectionError as RequestsConnectionError
 from .response_handling import handle_create
 from .response_handling import handle_get
-from .response_handling import handle_modify
 from .response_handling import perform_list
 
 
 def get_url(base_url):
     """
-    Get the URL for interacting with trained models
-    :return: The trained model URL
+    Get the URL for interacting with projects
+    :return: The project URL
     """
-    return base_url + "/v1/trained_models"
+    return base_url + "/v1/model_tests"
 
 
-def create_trained_model(base_url, obj):
+def create_model_test(base_url, obj):
     """
-    Create a trained model on the Ringling service
+    Create a model test on the Ringling service
     :param base_url: The URL of the Ringling Service
     :param obj: The model object payload
     :return: None
@@ -42,50 +41,31 @@ def create_trained_model(base_url, obj):
         response = requests.post(get_url(base_url),
                                  json=obj, timeout=5)
         if handle_create(response):
-            print(f"Trained model created with ID {response.json()['model_id']}")
+            print(f"Model Test created with ID {response.json()['test_id']}")
     except RequestsConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
 
 
-def get_trained_model(base_url, trained_model_id):
+def get_model_test(base_url, trained_model_id):
     """
-    Get a trained model given an ID
+    Get a model test given an ID
     :param base_url: The URL of the Ringling Service
-    :param trained_model_id: The ID of the trained model
+    :param trained_model_id: The ID of the model test
     :return: None
     """
     url = get_url(base_url) + "/" + str(trained_model_id)
     try:
         response = requests.get(url, timeout=5)
-        handle_get(response, "Trained Model", trained_model_id)
+        handle_get(response, "Model Test", trained_model_id)
     except RequestsConnectionError:
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
 
 
-def modify_trained_model(base_url, model_id, status):
+def list_model_tests(base_url):
     """
-    Modify the deployment status of a trained model
-    :param base_url: The URL of the Ringling Service
-    :param model_id: The ID of the trained model
-    :param status: The current deployment status of the model
-    :return: None
-    """
-    url = get_url(base_url) + "/" + str(model_id)
-    update = {"deployment_stage": status}
-    try:
-        response = requests.patch(url, json=update, timeout=5)
-        if handle_modify(response, "Trained Model", model_id):
-            print("Trained Model", model_id, "deployment status changed to", status)
-    except RequestsConnectionError:
-        print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
-        sys.exit(1)
-
-
-def list_trained_models(base_url):
-    """
-    List all the trained models in the Ringling Service
+    List all the model tests in the Ringling Service
     :param base_url: The URL of the Ringling Service
     :return: None
     """

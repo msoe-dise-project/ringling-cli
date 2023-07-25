@@ -32,6 +32,10 @@ from ringling.trained_models import create_trained_model
 from ringling.trained_models import list_trained_models
 from ringling.trained_models import get_trained_model
 from ringling.trained_models import modify_trained_model
+from ringling.model_tests import create_model_test
+from ringling.model_tests import list_model_tests
+from ringling.model_tests import get_model_test
+
 
 def parse_boolean(arg):
     if arg in ("True", "true", 1):
@@ -113,7 +117,7 @@ def parseargs():
     param_parsers.add_parser("list", help="List parameter sets")
 
     # Trained model parsing
-    model_parser = subparsers.add_parser("trained-model", help="Project interaction")
+    model_parser = subparsers.add_parser("trained-model", help="Trained Model interaction")
     model_parsers = model_parser.add_subparsers(dest="action")
 
     model_get_parser = model_parsers.add_parser("get", help="Get trained model by ID")
@@ -170,7 +174,7 @@ def parseargs():
                                      choices=['testing', 'production', 'retired'],
                                      help="The deployment stage of the model")
 
-    model_modify_parser = model_parsers.add_parser("modify", help="Modify the activity status of a parameter set")
+    model_modify_parser = model_parsers.add_parser("modify", help="Modify the activity status of a trained model")
 
     model_modify_parser.add_argument("--id",
                                      type=int,
@@ -185,6 +189,57 @@ def parseargs():
                                      help="The deployment stage of the model")
 
     model_parsers.add_parser("list", help="List trained models")
+
+    # Model test parsing
+    test_parser = subparsers.add_parser("model-test", help="Model test interaction")
+    test_parsers = test_parser.add_subparsers(dest="action")
+
+    test_get_parser = test_parsers.add_parser("get", help="Get model test by ID")
+
+    test_get_parser.add_argument("--id",
+                                    type=int,
+                                    required=True,
+                                    help="A model test ID specifying the test to return")
+
+    test_create_parser = test_parsers.add_parser("create", help="Create a model test")
+
+    test_create_parser.add_argument("-P", "--project-id",
+                                     type=int,
+                                     required=True,
+                                     dest="project_id",
+                                     help="An integer ID specifying the project that the model test is linked to")
+
+    test_create_parser.add_argument("-PS", "--param-set-id",
+                                     type=int,
+                                     required=True,
+                                     dest="param_set_id",
+                                     help="An integer ID specifying the parameter set that the model test is linked to")
+
+    test_create_parser.add_argument("-MI", "--model-id",
+                                     type=int,
+                                     required=True,
+                                     dest="model_id",
+                                     help="An integer ID specifying the trained model that the model test is linked to")
+
+    test_create_parser.add_argument("-T", "--timestamp",
+                                     type=str,
+                                     required=True,
+                                     help="An ISO-8601 formatted string describing the model test timestamp")
+
+    test_create_parser.add_argument("-M", "--metrics-file",
+                                     type=str,
+                                     required=True,
+                                     dest="metrics",
+                                     help="A path to a json formatted file with the metrics for the test")
+
+    test_create_parser.add_argument("-TP", "--test-passed",
+                                     type=parse_boolean,
+                                     required=True,
+                                     dest="test_passed",
+                                     help="A boolean specifying if the model test was passed")
+
+    test_parsers.add_parser("list", help="List model tests")
+
     return parser.parse_args()
 
 
@@ -261,4 +316,34 @@ if __name__ == "__main__":
         elif args.action == "list":
             list_trained_models(base_url)
 
-
+    elif args.object == "model-test":
+        if args.action == "get":
+            get_model_test(base_url, args.id)
+        elif args.action == "create":
+            try:
+                if args.metrics.endswith(".json"):
+                    if not os.path.isfile(args.metrics):
+                        print("Specified file does not exist", file=sys.stderr)
+                        sys.exit(1)
+                    with open(args.metrics, 'r', encoding='utf-8') as file:
+                        metrics = json.load(file)
+                        try:
+                            datetime.fromisoformat(args.timestamp)
+                        except ValueError:
+                            print("Datetime for timestamp must be in ISO-8601 format", file=sys.stderr)
+                            sys.exit(1)
+                        model_payload = {"project_id": args.project_id,
+                                         "parameter_set_id": args.param_set_id,
+                                         "model_id": args.model_id,
+                                         "test_timestamp": args.timestamp,
+                                         "test_metrics": metrics,
+                                         "passed_testing": args.test_passed}
+                        create_model_test(base_url, model_payload)
+                else:
+                    print("Specified file must be json", file=sys.stderr)
+                    sys.exit(1)
+            except json.decoder.JSONDecodeError:
+                print("Specified params must be a path to a valid JSON file", file=sys.stderr)
+                sys.exit(1)
+        elif args.action == "list":
+            list_model_tests(base_url)

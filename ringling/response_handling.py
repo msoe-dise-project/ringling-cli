@@ -27,8 +27,11 @@ def handle_create(response):
     """
     if 200 <= response.status_code < 300:
         return True
-    if response.status_code == 400:
+    elif response.status_code == 400:
         print(response.json()['error'], file=sys.stderr)
+        sys.exit(1)
+    elif response.status_code == 403:
+        print("Connection forbidden. Is there another service such as a Jupyter Notebook running on this port?")
         sys.exit(1)
     return False
 
@@ -43,11 +46,14 @@ def handle_modify(response, object_type, cur_id):
     """
     if 200 <= response.status_code < 300:
         return True
-    if response.status_code == 404:
+    elif response.status_code == 404:
         print(f"Invalid {object_type} ID {cur_id}", file=sys.stderr)
         sys.exit(1)
-    if response.status_code == 400:
+    elif response.status_code == 400:
         print(response.json()['error'], file=sys.stderr)
+        sys.exit(1)
+    elif response.status_code == 403:
+        print("Connection forbidden. Is there another service such as a Jupyter Notebook running on this port?")
         sys.exit(1)
     return False
 
@@ -63,8 +69,11 @@ def handle_get(response, object_type, cur_id):
     if 200 <= response.status_code < 300:
         response_json = response.json()
         pprint.pprint(response_json)
-    if response.status_code == 404:
+    elif response.status_code == 404:
         print(f"Invalid {object_type} ID {cur_id}", file=sys.stderr)
+        sys.exit(1)
+    elif response.status_code == 403:
+        print("Connection forbidden. Is there another service such as a Jupyter Notebook running on this port?")
         sys.exit(1)
 
 
@@ -76,6 +85,9 @@ def perform_list(rest_url):
     """
     try:
         response = requests.get(rest_url, timeout=5)
+        if response.status_code == 403:
+            print("Connection forbidden. Is there another service such as a Jupyter Notebook running on this port?")
+            sys.exit(1)
         response_json = response.json()
         pprint.pprint(response_json)
     except RequestsConnectionError:

@@ -21,6 +21,7 @@ from .response_handling import handle_create
 from .response_handling import handle_get
 from .response_handling import perform_list
 
+
 def get_url(base_url):
     """
     Get the URL for interacting with projects
@@ -47,6 +48,7 @@ def create_project(base_url, project_name):
         print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
         sys.exit(1)
 
+
 def list_projects(base_url):
     """
     List all the projects in the Ringling Service
@@ -54,6 +56,7 @@ def list_projects(base_url):
     :return: None
     """
     perform_list(get_url(base_url))
+
 
 def get_project(base_url, project_id):
     """

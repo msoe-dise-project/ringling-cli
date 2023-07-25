@@ -25,8 +25,8 @@ from .response_handling import perform_list
 
 def get_url(base_url):
     """
-    Get the URL for interacting with projects
-    :return: The project URL
+    Get the URL for interacting with parameter sets
+    :return: The parameter set URL
     """
     return base_url + "/v1/parameter_sets"
 
@@ -72,7 +72,7 @@ def get_param_set(base_url, param_set_id):
 
 def modify_param_set(base_url, param_set_id, is_active):
     """
-
+    Modify the activity status of a parameter set
     :param base_url: The URL of the Ringling Service
     :param param_set_id: The ID of the parameter set
     :param is_active: If the parameter set should be set to active or inactive
