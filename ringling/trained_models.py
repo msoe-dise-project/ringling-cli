@@ -21,6 +21,7 @@ from .response_handling import handle_create
 from .response_handling import handle_get
 from .response_handling import handle_modify
 from .response_handling import perform_list
+from .response_handling import connection_error
 
 
 def get_url(base_url):
@@ -44,8 +45,7 @@ def create_trained_model(base_url, obj):
         if handle_create(response):
             print(f"Trained model created with ID {response.json()['model_id']}")
     except RequestsConnectionError:
-        print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
-        sys.exit(1)
+        connection_error()
 
 
 def get_trained_model(base_url, trained_model_id):
@@ -57,10 +57,10 @@ def get_trained_model(base_url, trained_model_id):
     """
     url = get_url(base_url) + "/" + str(trained_model_id)
     try:
-        handle_get(requests.get(url, timeout=5), "Trained Model", trained_model_id)
+        response = requests.get(url, timeout=5)
+        handle_get(response, "Trained Model", trained_model_id)
     except RequestsConnectionError:
-        print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
-        sys.exit(1)
+        connection_error()
 
 
 def modify_trained_model(base_url, model_id, status):
@@ -78,8 +78,7 @@ def modify_trained_model(base_url, model_id, status):
         if handle_modify(response, "Trained Model", model_id):
             print("Trained Model", model_id, "deployment status changed to", status)
     except RequestsConnectionError:
-        print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
-        sys.exit(1)
+        connection_error()
 
 
 def list_trained_models(base_url):

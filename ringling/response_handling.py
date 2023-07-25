@@ -95,5 +95,13 @@ def perform_list(rest_url):
         response_json = response.json()
         pprint.pprint(response_json)
     except RequestsConnectionError:
-        print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
-        sys.exit(1)
+        connection_error()
+
+
+def connection_error():
+    """
+    To be called when there is a connection error
+    :return: None
+    """
+    print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
+    sys.exit(1)

@@ -21,6 +21,7 @@ from .response_handling import handle_create
 from .response_handling import handle_get
 from .response_handling import handle_modify
 from .response_handling import perform_list
+from .response_handling import connection_error
 
 
 def get_url(base_url):
@@ -50,8 +51,7 @@ def create_param_set(base_url, project_id, training_params, is_active):
         if handle_create(response):
             print(f"Parameter Set created with ID {response.json()['parameter_set_id']}")
     except RequestsConnectionError:
-        print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
-        sys.exit(1)
+        connection_error()
 
 
 def get_param_set(base_url, param_set_id):
@@ -66,8 +66,7 @@ def get_param_set(base_url, param_set_id):
         response = requests.get(url, timeout=5)
         handle_get(response, "Parameter Set", param_set_id)
     except RequestsConnectionError:
-        print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
-        sys.exit(1)
+        connection_error()
 
 
 def modify_param_set(base_url, param_set_id, is_active):
@@ -85,8 +84,7 @@ def modify_param_set(base_url, param_set_id, is_active):
         if handle_modify(response, "Parameter Set", param_set_id):
             print("Parameter Set", param_set_id, "active status changed to", is_active)
     except RequestsConnectionError:
-        print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
-        sys.exit(1)
+        connection_error()
 
 
 def list_param_sets(base_url):
