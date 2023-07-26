@@ -19,6 +19,7 @@ import pprint
 import requests
 from requests.exceptions import ConnectionError as RequestsConnectionError
 
+
 def handle_create(response):
     """
     Handle the response from create commands
@@ -29,6 +30,10 @@ def handle_create(response):
         return True
     if response.status_code == 400:
         print(response.json()['error'], file=sys.stderr)
+        sys.exit(1)
+    if response.status_code == 403:
+        print("Connection forbidden. "
+              "Is there another service such as a Jupyter Notebook running on this port?")
         sys.exit(1)
     return False
 
@@ -49,6 +54,10 @@ def handle_modify(response, object_type, cur_id):
     if response.status_code == 400:
         print(response.json()['error'], file=sys.stderr)
         sys.exit(1)
+    if response.status_code == 403:
+        print("Connection forbidden. "
+              "Is there another service such as a Jupyter Notebook running on this port?")
+        sys.exit(1)
     return False
 
 
@@ -66,6 +75,10 @@ def handle_get(response, object_type, cur_id):
     if response.status_code == 404:
         print(f"Invalid {object_type} ID {cur_id}", file=sys.stderr)
         sys.exit(1)
+    if response.status_code == 403:
+        print("Connection forbidden. "
+              "Is there another service such as a Jupyter Notebook running on this port?")
+        sys.exit(1)
 
 
 def perform_list(rest_url):
@@ -76,8 +89,20 @@ def perform_list(rest_url):
     """
     try:
         response = requests.get(rest_url, timeout=5)
+        if response.status_code == 403:
+            print("Connection forbidden. "
+                  "Is there another service such as a Jupyter Notebook running on this port?")
+            sys.exit(1)
         response_json = response.json()
         pprint.pprint(response_json)
     except RequestsConnectionError:
-        print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
-        sys.exit(1)
+        connection_error()
+
+
+def connection_error():
+    """
+    To be called when there is a connection error
+    :return: None
+    """
+    print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
+    sys.exit(1)

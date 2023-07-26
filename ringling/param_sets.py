@@ -14,19 +14,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import sys
 import requests
 from requests.exceptions import ConnectionError as RequestsConnectionError
 from .response_handling import handle_create
 from .response_handling import handle_get
 from .response_handling import handle_modify
 from .response_handling import perform_list
+from .response_handling import connection_error
 
 
 def get_url(base_url):
     """
-    Get the URL for interacting with projects
-    :return: The project URL
+    Get the URL for interacting with parameter sets
+    :return: The parameter set URL
     """
     return base_url + "/v1/parameter_sets"
 
@@ -50,8 +50,7 @@ def create_param_set(base_url, project_id, training_params, is_active):
         if handle_create(response):
             print(f"Parameter Set created with ID {response.json()['parameter_set_id']}")
     except RequestsConnectionError:
-        print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
-        sys.exit(1)
+        connection_error()
 
 
 def get_param_set(base_url, param_set_id):
@@ -66,13 +65,12 @@ def get_param_set(base_url, param_set_id):
         response = requests.get(url, timeout=5)
         handle_get(response, "Parameter Set", param_set_id)
     except RequestsConnectionError:
-        print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
-        sys.exit(1)
+        connection_error()
 
 
 def modify_param_set(base_url, param_set_id, is_active):
     """
-
+    Modify the activity status of a parameter set
     :param base_url: The URL of the Ringling Service
     :param param_set_id: The ID of the parameter set
     :param is_active: If the parameter set should be set to active or inactive
@@ -85,8 +83,7 @@ def modify_param_set(base_url, param_set_id, is_active):
         if handle_modify(response, "Parameter Set", param_set_id):
             print("Parameter Set", param_set_id, "active status changed to", is_active)
     except RequestsConnectionError:
-        print("Can not connect to model management service. Is Ringling running?", file=sys.stderr)
-        sys.exit(1)
+        connection_error()
 
 
 def list_param_sets(base_url):

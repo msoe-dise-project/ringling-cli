@@ -204,3 +204,65 @@ Output:
 ```
 Trained Model 1 deployment status changed to testing
 ```
+
+## Interfacing with Model Tests
+The following commands can be used to create, list, and get trained models.
+
+#### Create
+Input:
+
+```
+ringling-cli localhost model-test create --project-id 2 --param-set-id 3
+--model-id 4 --timestamp 2023-07-25T12:05:08.060499
+--metrics-file "C:\Users\path\to\file.pickle" --test-passed True
+```
+
+Output:
+
+```
+Model Test created with ID 5
+```
+
+#### List
+Input:
+
+```
+ringling-cli localhost model-test list
+```
+
+Output:
+
+```
+{'model_tests': [{'model_id': 2,
+                  'parameter_set_id': 1,
+                  'passed_testing': True,
+                  'project_id': 5,
+                  'test_id': 1,
+                  'test_metrics': {'precision': 0.2, 'recall': 0.8},
+                  'test_timestamp': '2023-07-25T20:18:34.913717'},
+                 {'model_id': 2,
+                  'parameter_set_id': 1,
+                  'passed_testing': True,
+                  'project_id': 5,
+                  'test_id': 2,
+                  'test_metrics': {'precision': 0.2, 'recall': 0.8},
+                  'test_timestamp': '2023-07-25T20:18:34.932949'}]}
+```
+#### Get
+Input:
+
+```
+ringling-cli localhost model-test get --id 5
+```
+
+Output:
+
+```
+{'model_id': 53,
+ 'parameter_set_id': 1,
+ 'passed_testing': True,
+ 'project_id': 5,
+ 'test_id': 5,
+ 'test_metrics': {'precision': 0.2, 'recall': 0.8},
+ 'test_timestamp': '2023-07-25T20:18:34.965780'}
+```
